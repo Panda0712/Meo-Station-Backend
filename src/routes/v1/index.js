@@ -5,6 +5,7 @@
  */
 import express from "express";
 import { StatusCodes } from "http-status-codes";
+import { hotelRoute } from "~/routes/v1/hotelRoute";
 import { userRoute } from "~/routes/v1/userRoute";
 
 const Router = express.Router();
@@ -20,5 +21,8 @@ Router.get("/status", (req, res) => {
 
 // Users
 Router.use("/users", userRoute);
+
+// Hotels
+Router.use("/hotels", hotelRoute);
 
 export const APIs_V1 = Router;

@@ -1,0 +1,77 @@
+import Joi from "joi";
+import { ObjectId } from "mongodb";
+import { GET_DB } from "~/config/mongodb";
+
+const HOTEL_COLLECTION_NAME = " hotels";
+const HOTEL_COLLECTION_SCHEMA = Joi.object({
+  title: Joi.string().required().min(5).max(50).trim().strict(),
+  location: Joi.string().required().min(5).max(80).trim().strict(),
+  images: Joi.array().items(Joi.string().required()).max(3),
+  description: Joi.string().required().min(5).max(150).trim().strict(),
+  utilities: Joi.array().items(Joi.string().required()).max(8),
+  maxGuest: Joi.number().required().min(1).max(8),
+  pricePerNight: Joi.number().required().min(150000).max(1000000),
+  priceFirstHour: Joi.number().required().min(50000).max(300000),
+  priceEachHour: Joi.number().required().min(70000).max(300000),
+
+  createdAt: Joi.date().timestamp("javascript").default(Date.now),
+  updatedAt: Joi.date().timestamp("javascript").default(null),
+  _destroy: Joi.boolean().default(false),
+});
+
+const INVALID_UPDATE_FIELDS = ["_id", "createdAt"];
+
+const validateBeforeCreate = async (data) => {
+  return await HOTEL_COLLECTION_SCHEMA.validateAsync(data, {
+    abortEarly: false,
+  });
+};
+
+const createNew = async (reqBody) => {
+  try {
+    const validData = await validateBeforeCreate(reqBody);
+
+    const createdHotel = await GET_DB()
+      .collection(HOTEL_COLLECTION_NAME)
+      .insertOne(validData);
+
+    return createdHotel;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+const update = async (hotelId, updateData) => {
+  try {
+    Object.keys(updateData).forEach((fieldName) => {
+      if (INVALID_UPDATE_FIELDS.includes(fieldName)) {
+        delete updateData[fieldName];
+      }
+    });
+
+    const result = await GET_DB()
+      .collection(HOTEL_COLLECTION_NAME)
+      .findOneAndUpdate(
+        {
+          _id: new ObjectId(String(hotelId)),
+        },
+        {
+          $set: updateData,
+        },
+        {
+          returnDocument: "after",
+        }
+      );
+
+    return result;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const hotelModel = {
+  HOTEL_COLLECTION_NAME,
+  HOTEL_COLLECTION_SCHEMA,
+  createNew,
+  update,
+};
