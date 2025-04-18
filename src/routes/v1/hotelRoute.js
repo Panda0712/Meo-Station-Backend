@@ -6,17 +6,25 @@ import { hotelValidation } from "~/validations/hotelValidation";
 
 const Router = express.Router();
 
-Router.route("/").post(
-  authMiddleware.isAuthorized,
-  hotelValidation.createNew,
-  hotelController.createNew
-);
+Router.route("/")
+  .get(authMiddleware.isAuthorized, hotelController.getListHotels)
+  .post(
+    authMiddleware.isAuthorized,
+    hotelValidation.createNew,
+    hotelController.createNew
+  );
 
-Router.route("/:hotelId").delete(
-  authMiddleware.isAuthorized,
-  hotelValidation.deleteHotel,
-  hotelController.deleteHotel
-);
+Router.route("/:hotelId")
+  .put(
+    authMiddleware.isAuthorized,
+    hotelValidation.update,
+    hotelController.update
+  )
+  .delete(
+    authMiddleware.isAuthorized,
+    hotelValidation.deleteHotel,
+    hotelController.deleteHotel
+  );
 
 Router.route("/uploads").post(
   authMiddleware.isAuthorized,
