@@ -2,6 +2,7 @@ import Joi from "joi";
 import { ObjectId } from "mongodb";
 import { GET_DB } from "~/config/mongodb";
 import { pagingSkipValue } from "~/utils/algorithms";
+import { EMAIL_RULE, EMAIL_RULE_MESSAGE } from "~/utils/validators";
 
 const CONTACT_COLLECTION_NAME = "contacts";
 const CONTACT_COLLECTION_SCHEMA = Joi.object({
