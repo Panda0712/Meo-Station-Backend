@@ -5,6 +5,7 @@
  */
 import express from "express";
 import { StatusCodes } from "http-status-codes";
+import { contactRoute } from "~/routes/v1/contactRoute";
 import { hotelRoute } from "~/routes/v1/hotelRoute";
 import { userRoute } from "~/routes/v1/userRoute";
 
@@ -24,5 +25,8 @@ Router.use("/users", userRoute);
 
 // Hotels
 Router.use("/hotels", hotelRoute);
+
+// Contact
+Router.use("/contacts", contactRoute);
 
 export const APIs_V1 = Router;
