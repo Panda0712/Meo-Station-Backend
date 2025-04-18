@@ -28,6 +28,51 @@ const uploadImages = async (req, res, next) => {
   }
 };
 
-const deleteHotel = async (req, res, next) => {};
+const getListHotels = async (req, res, next) => {
+  try {
+    const { page, itemsPerPage, q } = req.query;
+    const queryFilter = q;
 
-export const hotelController = { createNew, uploadImages, deleteHotel };
+    const results = await hotelService.getListHotels(
+      page,
+      itemsPerPage,
+      queryFilter
+    );
+
+    res.status(StatusCodes.OK).json(results);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const update = async (req, res, next) => {
+  try {
+    const hotelId = req.params.hotelId;
+
+    const updatedHotel = await hotelService.update(hotelId, req.body);
+
+    res.status(StatusCodes.OK).json(updatedHotel);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteHotel = async (req, res, next) => {
+  try {
+    const hotelId = req.params.hotelId;
+
+    const deletedHotel = await hotelService.deleteHotel(hotelId);
+
+    res.status(StatusCodes.OK).json(deletedHotel);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const hotelController = {
+  createNew,
+  uploadImages,
+  getListHotels,
+  update,
+  deleteHotel,
+};

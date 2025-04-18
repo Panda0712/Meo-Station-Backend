@@ -1,6 +1,7 @@
 import Joi from "joi";
 import { ObjectId } from "mongodb";
 import { GET_DB } from "~/config/mongodb";
+import { pagingSkipValue } from "~/utils/algorithms";
 
 const HOTEL_COLLECTION_NAME = " hotels";
 const HOTEL_COLLECTION_SCHEMA = Joi.object({
@@ -8,11 +9,19 @@ const HOTEL_COLLECTION_SCHEMA = Joi.object({
   location: Joi.string().required().min(5).max(80).trim().strict(),
   images: Joi.array().items(Joi.string().required()).max(3),
   description: Joi.string().required().min(5).max(150).trim().strict(),
-  utilities: Joi.array().items(Joi.string().required()).max(8),
+  utilities: Joi.array()
+    .items(
+      Joi.object({
+        type: Joi.string().required().trim().strict(),
+        value: Joi.string().required().trim().strict(),
+      })
+    )
+    .max(8),
   maxGuest: Joi.number().required().min(1).max(8),
   pricePerNight: Joi.number().required().min(150000).max(1000000),
   priceFirstHour: Joi.number().required().min(50000).max(300000),
   priceEachHour: Joi.number().required().min(70000).max(300000),
+  discount: Joi.number().required().min(10000),
 
   createdAt: Joi.date().timestamp("javascript").default(Date.now),
   updatedAt: Joi.date().timestamp("javascript").default(null),
@@ -36,6 +45,20 @@ const createNew = async (reqBody) => {
       .insertOne(validData);
 
     return createdHotel;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+const findOneById = async (id) => {
+  try {
+    const foundHotel = await GET_DB()
+      .collection(HOTEL_COLLECTION_NAME)
+      .findOne({
+        _id: new ObjectId(String(id)),
+      });
+
+    return foundHotel;
   } catch (error) {
     throw new Error(error);
   }
@@ -69,9 +92,75 @@ const update = async (hotelId, updateData) => {
   }
 };
 
+const getListHotels = async (page, itemsPerPage, queryFilter) => {
+  try {
+    const queryCondition = [
+      {
+        _destroy: false,
+      },
+    ];
+
+    if (queryFilter) {
+      Object.keys(queryFilter).forEach((key) => {
+        queryCondition.push({
+          [key]: { $regex: new RegExp(queryFilter[key], "i") },
+        });
+      });
+    }
+
+    const query = await GET_DB()
+      .collection(HOTEL_COLLECTION_NAME)
+      .aggregate(
+        [
+          { $match: { $and: queryCondition } },
+          { $sort: { title: 1 } },
+          {
+            $facet: {
+              queryHotels: [
+                { $skip: pagingSkipValue(page, itemsPerPage) },
+                { $limit: itemsPerPage },
+              ],
+              queryTotalHotels: [{ $count: "countedAllHotels" }],
+            },
+          },
+        ],
+        {
+          collation: { locale: "en" },
+        }
+      )
+      .toArray();
+
+    const res = query[0];
+
+    return {
+      hotels: res.queryHotels || [],
+      totalHotels: res.queryTotalHotels[0]?.countedAllHotels || 0,
+    };
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+const deleteHotel = async (hotelId) => {
+  try {
+    const deletedHotel = await GET_DB()
+      .collection(HOTEL_COLLECTION_NAME)
+      .deleteOne({
+        _id: new ObjectId(String(hotelId)),
+      });
+
+    return deletedHotel;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 export const hotelModel = {
   HOTEL_COLLECTION_NAME,
   HOTEL_COLLECTION_SCHEMA,
   createNew,
+  findOneById,
   update,
+  getListHotels,
+  deleteHotel,
 };

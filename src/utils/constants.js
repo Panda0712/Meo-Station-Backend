@@ -11,4 +11,4 @@ export const WEBSITE_DOMAINS =
     : env.WEBSITE_DOMAIN_DEVELOPMENT;
 
 export const DEFAULT_PAGE = 1;
-export const DEFAULT_ITEMS_PER_PAGE = 12;
+export const DEFAULT_ITEMS_PER_PAGE = 8;
