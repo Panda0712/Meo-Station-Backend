@@ -3,7 +3,7 @@ import { ObjectId } from "mongodb";
 import { GET_DB } from "~/config/mongodb";
 import { pagingSkipValue } from "~/utils/algorithms";
 
-const HOTEL_COLLECTION_NAME = " hotels";
+const HOTEL_COLLECTION_NAME = "hotels";
 const HOTEL_COLLECTION_SCHEMA = Joi.object({
   title: Joi.string().required().min(5).max(50).trim().strict(),
   location: Joi.string().required().min(5).max(80).trim().strict(),

@@ -11,7 +11,22 @@ const createNew = async (req, res, next) => {
   }
 };
 
-const getListContacts = async (req, res, next) => {};
+const getListContacts = async (req, res, next) => {
+  try {
+    const { page, itemsPerPage, q } = req.query;
+    const queryFilter = q;
+
+    const results = await contactService.getListContacts(
+      page,
+      itemsPerPage,
+      queryFilter
+    );
+
+    res.status(StatusCodes.OK).json(results);
+  } catch (error) {
+    next(error);
+  }
+};
 
 const deleteContact = async (req, res, next) => {
   try {
