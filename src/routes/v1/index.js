@@ -1,13 +1,11 @@
-/**
- * Updated by trungquandev.com's author on August 17 2023
- * YouTube: https://youtube.com/@trungquandev
- * "A bit of fragrance clings to the hand that gives flowers!"
- */
 import express from "express";
 import { StatusCodes } from "http-status-codes";
 import { contactRoute } from "~/routes/v1/contactRoute";
 import { hotelRoute } from "~/routes/v1/hotelRoute";
+import { momoRoute } from "~/routes/v1/momoRoute";
+import { notificationRoute } from "~/routes/v1/notificationRoute";
 import { userRoute } from "~/routes/v1/userRoute";
+import { zalopayRoute } from "~/routes/v1/zalopayRoute";
 
 const Router = express.Router();
 
@@ -26,7 +24,16 @@ Router.use("/users", userRoute);
 // Hotels
 Router.use("/hotels", hotelRoute);
 
-// Contact
+// Contacts
 Router.use("/contacts", contactRoute);
+
+// Notifications
+Router.use("/notifications", notificationRoute);
+
+// Payment MOMO
+Router.use("/payment/momo", momoRoute);
+
+// Payment ZALOPAY
+Router.use("/payment/zalopay", zalopayRoute);
 
 export const APIs_V1 = Router;

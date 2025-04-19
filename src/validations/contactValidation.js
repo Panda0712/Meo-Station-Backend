@@ -6,6 +6,8 @@ import {
   EMAIL_RULE_MESSAGE,
   OBJECT_ID_RULE,
   OBJECT_ID_RULE_MESSAGE,
+  PHONE_RULE,
+  PHONE_RULE_MESSAGE,
 } from "~/utils/validators";
 
 const createNew = async (req, res, next) => {
@@ -15,7 +17,10 @@ const createNew = async (req, res, next) => {
       .required()
       .pattern(EMAIL_RULE)
       .message(EMAIL_RULE_MESSAGE),
-    phone: Joi.string().required().min(9).max(11).trim().strict(),
+    phone: Joi.string()
+      .required()
+      .pattern(PHONE_RULE)
+      .message(PHONE_RULE_MESSAGE),
     message: Joi.string().required().min(10).max(200).trim().strict(),
   });
 
