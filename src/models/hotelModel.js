@@ -64,6 +64,20 @@ const findOneById = async (id) => {
   }
 };
 
+const findOneByName = async (name) => {
+  try {
+    const foundHotel = await GET_DB()
+      .collection(HOTEL_COLLECTION_NAME)
+      .findOne({
+        title: String(name),
+      });
+
+    return foundHotel;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 const update = async (hotelId, updateData) => {
   try {
     Object.keys(updateData).forEach((fieldName) => {
@@ -160,6 +174,7 @@ export const hotelModel = {
   HOTEL_COLLECTION_SCHEMA,
   createNew,
   findOneById,
+  findOneByName,
   update,
   getListHotels,
   deleteHotel,

@@ -1,14 +1,15 @@
+import exitHook from "async-exit-hook";
 import cookieParser from "cookie-parser";
-import express from "express";
 import cors from "cors";
+import express from "express";
 import http from "http";
 import socketIo from "socket.io";
-import exitHook from "async-exit-hook";
 import { corsOptions } from "~/config/cors";
-import { errorHandlingMiddleware } from "~/middlewares/errorHandlingMiddleware";
-import { CLOSE_DB, CONNECT_DB } from "~/config/mongodb";
-import { APIs_V1 } from "~/routes/v1";
 import { env } from "~/config/environment";
+import { CLOSE_DB, CONNECT_DB } from "~/config/mongodb";
+import { errorHandlingMiddleware } from "~/middlewares/errorHandlingMiddleware";
+import { APIs_V1 } from "~/routes/v1";
+import { sendNotificationToUser } from "~/sockets/sendNotificationToUserSocket";
 
 const START_SERVER = () => {
   const app = express();
@@ -28,7 +29,7 @@ const START_SERVER = () => {
     cors: corsOptions,
   });
   io.on("connection", (socket) => {
-    ////
+    sendNotificationToUser(socket);
   });
 
   if (env.BUILD_MODE === "production") {
