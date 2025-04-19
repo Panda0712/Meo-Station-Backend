@@ -152,6 +152,7 @@ export const notificationModel = {
   NOTIFICATION_COLLECTION_SCHEMA,
   createNew,
   findOneById,
+  getNotifications,
   updateNotification,
   deleteNotification,
 };
