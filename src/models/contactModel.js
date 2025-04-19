@@ -2,7 +2,12 @@ import Joi from "joi";
 import { ObjectId } from "mongodb";
 import { GET_DB } from "~/config/mongodb";
 import { pagingSkipValue } from "~/utils/algorithms";
-import { EMAIL_RULE, EMAIL_RULE_MESSAGE } from "~/utils/validators";
+import {
+  EMAIL_RULE,
+  EMAIL_RULE_MESSAGE,
+  PHONE_RULE,
+  PHONE_RULE_MESSAGE,
+} from "~/utils/validators";
 
 const CONTACT_COLLECTION_NAME = "contacts";
 const CONTACT_COLLECTION_SCHEMA = Joi.object({
@@ -11,7 +16,10 @@ const CONTACT_COLLECTION_SCHEMA = Joi.object({
     .required()
     .pattern(EMAIL_RULE)
     .message(EMAIL_RULE_MESSAGE),
-  phone: Joi.string().required().min(9).max(11).trim().strict(),
+  phone: Joi.string()
+    .required()
+    .pattern(PHONE_RULE)
+    .message(PHONE_RULE_MESSAGE),
   message: Joi.string().required().min(10).max(200).trim().strict(),
 
   createdAt: Joi.date().timestamp("javascript").default(Date.now),
@@ -34,6 +42,20 @@ const createNew = async (data) => {
       .insertOne(validData);
 
     return createdContact;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+const findOneById = async (contactId) => {
+  try {
+    const foundContact = await GET_DB()
+      .collection(CONTACT_COLLECTION_NAME)
+      .findOne({
+        _id: new ObjectId(String(contactId)),
+      });
+
+    return foundContact;
   } catch (error) {
     throw new Error(error);
   }
@@ -104,6 +126,7 @@ const deleteContact = async (contactId) => {
 
 export const contactModel = {
   createNew,
+  findOneById,
   getListContacts,
   deleteContact,
 };
