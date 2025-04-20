@@ -49,7 +49,7 @@ const getNotifications = async (page, itemsPerPage, queryFilter) => {
   }
 };
 
-const updatedNotification = async (notificationId, reqData) => {
+const updateNotification = async (notificationId, reqData) => {
   try {
     const updatedNotification = await notificationModel.updateNotification(
       notificationId,
@@ -77,6 +77,6 @@ const deleteNotification = async (notificationId) => {
 export const notificationService = {
   createNew,
   getNotifications,
-  updatedNotification,
+  updateNotification,
   deleteNotification,
 };
