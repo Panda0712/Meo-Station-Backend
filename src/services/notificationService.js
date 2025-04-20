@@ -19,7 +19,7 @@ const createNew = async (reqData) => {
 
     const createdNotification = await notificationModel.createNew({
       ...reqData,
-      hotelId: foundHotel._id,
+      hotelId: String(foundHotel._id),
     });
 
     const getNewNotification = await notificationModel.findOneById(
