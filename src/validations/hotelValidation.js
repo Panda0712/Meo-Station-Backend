@@ -40,7 +40,6 @@ const update = async (req, res, next) => {
     location: Joi.string().trim().strict(),
     description: Joi.string().trim().strict(),
   });
-
   try {
     await correctCondition.validateAsync(req.body, {
       abortEarly: false,
