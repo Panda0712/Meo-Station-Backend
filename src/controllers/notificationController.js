@@ -1,4 +1,5 @@
 import { StatusCodes } from "http-status-codes";
+import { CloudinaryProvider } from "~/providers/CloudinaryProvider";
 import { notificationService } from "~/services/notificationService";
 
 const createNew = async (req, res, next) => {
@@ -6,6 +7,21 @@ const createNew = async (req, res, next) => {
     const createdNotification = await notificationService.createNew(req.body);
 
     res.status(StatusCodes.CREATED).json(createdNotification);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const uploadImages = async (req, res, next) => {
+  try {
+    const hotelNotificationImage = req.file;
+
+    const uploadImageFile = await CloudinaryProvider.streamUpload(
+      hotelNotificationImage.buffer,
+      "hotel-notifications"
+    );
+
+    return res.status(StatusCodes.CREATED).json(uploadImageFile);
   } catch (error) {
     next(error);
   }
@@ -56,6 +72,7 @@ const deleteNotification = async (req, res, next) => {
 export const notificationController = {
   createNew,
   getNotifications,
+  uploadImages,
   updateNotification,
   deleteNotification,
 };
