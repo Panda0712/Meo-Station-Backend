@@ -22,7 +22,7 @@ const NOTIFICATION_COLLECTION_SCHEMA = Joi.object({
 const INVALID_UPDATE_FIELDS = ["_id"];
 
 const validateBeforeCreate = async (data) => {
-  return await HOTEL_COLLECTION_SCHEMA.validateAsync(data, {
+  return await NOTIFICATION_COLLECTION_SCHEMA.validateAsync(data, {
     abortEarly: false,
   });
 };
