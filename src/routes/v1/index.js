@@ -1,5 +1,7 @@
 import express from "express";
 import { StatusCodes } from "http-status-codes";
+import { blogRoute } from "~/routes/v1/blogRoute";
+import { commentRoute } from "~/routes/v1/commentRoute";
 import { contactRoute } from "~/routes/v1/contactRoute";
 import { hotelRoute } from "~/routes/v1/hotelRoute";
 import { momoRoute } from "~/routes/v1/momoRoute";
@@ -29,6 +31,12 @@ Router.use("/contacts", contactRoute);
 
 // Notifications
 Router.use("/notifications", notificationRoute);
+
+// Comments
+Router.use("/comments", commentRoute);
+
+// Blogs
+Router.use("/blogs", blogRoute);
 
 // Payment MOMO
 Router.use("/payment/momo", momoRoute);

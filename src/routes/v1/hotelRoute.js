@@ -20,6 +20,11 @@ Router.route("/:hotelId")
     hotelValidation.update,
     hotelController.update
   )
+  .get(
+    authMiddleware.isAuthorized,
+    hotelValidation.getDetails,
+    hotelController.getDetails
+  )
   .delete(
     authMiddleware.isAuthorized,
     hotelValidation.deleteHotel,
