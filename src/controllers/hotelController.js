@@ -12,6 +12,18 @@ const createNew = async (req, res, next) => {
   }
 };
 
+const getDetails = async (req, res, next) => {
+  try {
+    const hotelId = req.params.hotelId;
+
+    const foundHotel = await hotelService.getDetails(hotelId);
+
+    res.status(StatusCodes.OK).json(foundHotel);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const uploadImages = async (req, res, next) => {
   try {
     const hotelImagesList = req.files;
@@ -71,6 +83,7 @@ const deleteHotel = async (req, res, next) => {
 
 export const hotelController = {
   createNew,
+  getDetails,
   uploadImages,
   getListHotels,
   update,

@@ -1,4 +1,6 @@
+import { StatusCodes } from "http-status-codes";
 import { hotelModel } from "~/models/hotelModel";
+import ApiError from "~/utils/ApiError";
 import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE } from "~/utils/constants";
 
 const createNew = async (reqBody) => {
@@ -8,6 +10,22 @@ const createNew = async (reqBody) => {
     const getNewHotel = await hotelModel.findOneById(createdHotel.insertedId);
 
     return getNewHotel;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getDetails = async (hotelId) => {
+  try {
+    const foundHotel = await hotelModel.getDetails(hotelId);
+    if (!foundHotel) {
+      throw new ApiError(
+        StatusCodes.NOT_FOUND,
+        "Không tìm thấy khách sạn tương ứng!! Vui lòng thử lại sau!!"
+      );
+    }
+
+    return foundHotel;
   } catch (error) {
     throw error;
   }
@@ -50,4 +68,10 @@ const deleteHotel = async (hotelId) => {
   }
 };
 
-export const hotelService = { createNew, getListHotels, update, deleteHotel };
+export const hotelService = {
+  createNew,
+  getDetails,
+  getListHotels,
+  update,
+  deleteHotel,
+};

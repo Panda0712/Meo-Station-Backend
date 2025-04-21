@@ -8,7 +8,7 @@ const HOTEL_COLLECTION_SCHEMA = Joi.object({
   title: Joi.string().required().min(5).max(50).trim().strict(),
   location: Joi.string().required().min(5).max(80).trim().strict(),
   images: Joi.array().items(Joi.string().required()).max(3),
-  description: Joi.string().required().min(5).max(150).trim().strict(),
+  description: Joi.string().required().min(5).max(350).trim().strict(),
   utilities: Joi.array()
     .items(
       Joi.object({
@@ -45,6 +45,25 @@ const createNew = async (reqBody) => {
       .insertOne(validData);
 
     return createdHotel;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+const getDetails = async (hotelId) => {
+  try {
+    const queryConditions = [
+      {
+        _id: new ObjectId(String(hotelId)),
+      },
+    ];
+
+    const foundHotel = await GET_DB()
+      .collection(HOTEL_COLLECTION_NAME)
+      .aggregate([{ $match: { $and: queryConditions } }])
+      .toArray();
+
+    return foundHotel[0] || null;
   } catch (error) {
     throw new Error(error);
   }
@@ -173,6 +192,7 @@ export const hotelModel = {
   HOTEL_COLLECTION_NAME,
   HOTEL_COLLECTION_SCHEMA,
   createNew,
+  getDetails,
   findOneById,
   findOneByName,
   update,
