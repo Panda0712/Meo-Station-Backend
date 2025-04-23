@@ -18,6 +18,13 @@ export const BOOKING_STATUS = {
   COMPLETED: "COMPLETED",
   CANCELLED: "CANCELLED",
 };
+
+export const PAYMENT_METHODS = {
+  MOMO: "MOMO",
+  ZALOPAY: "ZALOPAY",
+  CASH: "CASH",
+};
+
 export const ZALOPAY_CONFIG = {
   app_id: "2553",
   key1: "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",

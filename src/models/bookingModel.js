@@ -2,7 +2,11 @@ import Joi from "joi";
 import { ObjectId } from "mongodb";
 import { GET_DB } from "~/config/mongodb";
 import { pagingSkipValue } from "~/utils/algorithms";
-import { BOOKING_MODE, BOOKING_STATUS } from "~/utils/constants";
+import {
+  BOOKING_MODE,
+  BOOKING_STATUS,
+  PAYMENT_METHODS,
+} from "~/utils/constants";
 import {
   EMAIL_RULE,
   EMAIL_RULE_MESSAGE,
@@ -36,6 +40,9 @@ const BOOKING_COLLECTION_SCHEMA = Joi.object({
   hotelLocation: Joi.string().required().min(10).trim().strict(),
   hotelName: Joi.string().required().min(5).trim().strict(),
 
+  paymentMethod: Joi.string()
+    .required()
+    .valid(PAYMENT_METHODS.CASH, PAYMENT_METHODS.MOMO, PAYMENT_METHODS.ZALOPAY),
   status: Joi.string()
     .required()
     .valid(

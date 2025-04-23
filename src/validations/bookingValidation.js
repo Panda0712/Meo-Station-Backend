@@ -1,7 +1,11 @@
 import { StatusCodes } from "http-status-codes";
 import Joi from "joi";
 import ApiError from "~/utils/ApiError";
-import { BOOKING_MODE, BOOKING_STATUS } from "~/utils/constants";
+import {
+  BOOKING_MODE,
+  BOOKING_STATUS,
+  PAYMENT_METHODS,
+} from "~/utils/constants";
 import {
   EMAIL_RULE,
   EMAIL_RULE_MESSAGE,
@@ -38,6 +42,13 @@ const createNew = async (req, res, next) => {
     checkOutDate: Joi.string().isoDate().required(),
     numberOfNights: Joi.number().required(),
     guest: Joi.number().required(),
+    paymentMethod: Joi.string()
+      .required()
+      .valid(
+        PAYMENT_METHODS.CASH,
+        PAYMENT_METHODS.MOMO,
+        PAYMENT_METHODS.ZALOPAY
+      ),
     status: Joi.string()
       .required()
       .valid(
