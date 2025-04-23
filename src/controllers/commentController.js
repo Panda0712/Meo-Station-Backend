@@ -20,7 +20,7 @@ const createNew = async (req, res, next) => {
 
 const getAllComments = async (req, res, next) => {
   try {
-    const hotelId = req.body.hotelId;
+    const { hotelId } = req.query;
     const results = await commentService.getAllComments(hotelId);
 
     res.status(StatusCodes.OK).json(results);

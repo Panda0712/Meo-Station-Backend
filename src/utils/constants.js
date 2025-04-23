@@ -8,6 +8,16 @@ export const WHITELIST_DOMAINS = [
 export var ACCESS_KEY_MOMO = "F8BBA842ECF85";
 export var SECRET_KEY_MOMO = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
 
+export const BOOKING_MODE = {
+  night: "in-nights",
+  day: "in-day",
+};
+
+export const BOOKING_STATUS = {
+  PENDING: "PENDING",
+  COMPLETED: "COMPLETED",
+  CANCELLED: "CANCELLED",
+};
 export const ZALOPAY_CONFIG = {
   app_id: "2553",
   key1: "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",

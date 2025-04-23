@@ -1,6 +1,7 @@
 import Joi from "joi";
 import { ObjectId } from "mongodb";
 import { GET_DB } from "~/config/mongodb";
+import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from "~/utils/validators";
 
 const COMMENT_COLLECTION_NAME = "comments";
 const COMMENT_COLLECTION_SCHEMA = Joi.object({
@@ -32,7 +33,12 @@ const validateBeforeCreate = async (data) => {
 
 const createNew = async (reqData) => {
   try {
-    const validData = await validateBeforeCreate(reqData);
+    const validData = await validateBeforeCreate({
+      ...reqData,
+      hotelId: String(reqData.hotelId),
+    });
+
+    validData.hotelId = new ObjectId(String(validData.hotelId));
 
     const createdComment = await GET_DB()
       .collection(COMMENT_COLLECTION_NAME)
