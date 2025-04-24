@@ -40,7 +40,7 @@ const createNew = async (req, res, next) => {
     mode: Joi.string().required().valid(BOOKING_MODE.night, BOOKING_MODE.day),
     checkInDate: Joi.string().isoDate().required(),
     checkOutDate: Joi.string().isoDate().required(),
-    numberOfNights: Joi.number().required(),
+    numberOfNights: Joi.number().optional(),
     guest: Joi.number().required(),
     paymentMethod: Joi.string()
       .required()
@@ -57,7 +57,7 @@ const createNew = async (req, res, next) => {
         BOOKING_STATUS.COMPLETED
       ),
     totalPrice: Joi.number().required(),
-    note: Joi.string(),
+    note: Joi.string().allow("").optional(),
   });
 
   try {

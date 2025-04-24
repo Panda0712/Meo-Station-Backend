@@ -12,7 +12,6 @@ Router.route("/").post(
 );
 
 Router.route("/callback").post(
-  authMiddleware.isAuthorized,
   momoValidation.callbackPayment,
   momoController.callbackPayment
 );

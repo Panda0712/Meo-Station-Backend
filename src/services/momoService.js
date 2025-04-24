@@ -1,26 +1,35 @@
-import crypto from "crypto";
 import axios from "axios";
-import { ACCESS_KEY_MOMO, SECRET_KEY_MOMO } from "~/utils/constants";
+import crypto from "crypto";
+import { bookingModel } from "~/models/bookingModel";
+import {
+  ACCESS_KEY_MOMO,
+  BOOKING_STATUS,
+  SECRET_KEY_MOMO,
+} from "~/utils/constants";
 
 const createPayment = async (reqData) => {
-  const { amount, orderInfo: orderInfoData } = reqData;
+  const bookingInfoData = reqData;
+
+  const { totalPrice: amount } = bookingInfoData;
 
   var orderInfo = "pay with MoMo";
   var partnerCode = "MOMO";
-  var redirectUrl = "https://fast-food-ecommerce.vercel.app/success";
+  var redirectUrl = "http://localhost:5173/booking/complete";
   var ipnUrl =
-    "https://1589-2402-800-63a8-dd41-550-3021-3cf6-a760.ngrok-free.app/callback";
+    "https://5870-115-76-103-197.ngrok-free.app/v1/payment/momo/callback";
   var requestType = "payWithMethod";
   var orderId = partnerCode + new Date().getTime();
   var requestId = orderId;
-  var extraData = Buffer.from(JSON.stringify(orderInfoData)).toString("base64");
+  var extraData = Buffer.from(JSON.stringify(bookingInfoData)).toString(
+    "base64"
+  );
   var orderGroupId = "";
   var autoCapture = true;
   var lang = "vi";
 
   var rawSignature =
     "accessKey=" +
-    accessKey +
+    ACCESS_KEY_MOMO +
     "&amount=" +
     amount +
     "&extraData=" +
@@ -41,7 +50,7 @@ const createPayment = async (reqData) => {
     requestType;
 
   var signature = crypto
-    .createHmac("sha256", secretKey)
+    .createHmac("sha256", SECRET_KEY_MOMO)
     .update(rawSignature)
     .digest("hex");
 
@@ -53,7 +62,7 @@ const createPayment = async (reqData) => {
     amount: amount,
     orderId: orderId,
     orderInfo: orderInfo,
-    orderData: orderInfoData,
+    orderData: bookingInfoData,
     redirectUrl: redirectUrl,
     ipnUrl: ipnUrl,
     lang: lang,
@@ -83,18 +92,32 @@ const createPayment = async (reqData) => {
 };
 
 const callbackPayment = async (reqData) => {
-  const { extraData } = reqData;
+  const { extraData, resultCode } = reqData;
 
-  let orderDataBody;
+  if (resultCode !== 0) {
+    console.log("Payment failed with code:", resultCode);
+    return { success: false, message: "Payment failed" };
+  }
+
+  let bookingData;
   if (extraData) {
     try {
-      orderDataBody = JSON.parse(
+      bookingData = JSON.parse(
         Buffer.from(extraData, "base64").toString("utf-8")
       );
     } catch (error) {
-      throw new Error(error);
+      throw new Error("Failed to parse extraData: " + error.message);
     }
   }
+
+  const updatedBooking = {
+    ...bookingData,
+    status: BOOKING_STATUS.COMPLETED,
+  };
+
+  const createdBooking = await bookingModel.createNew(updatedBooking);
+
+  return createdBooking;
 };
 
 const checkTransactionStatus = async (id) => {

@@ -1,14 +1,18 @@
-import { ZALOPAY_CONFIG } from "~/utils/constants";
-import CryptoJS from "crypto-js";
 import axios from "axios";
+import CryptoJS from "crypto-js";
+import moment from "moment";
+import { bookingModel } from "~/models/bookingModel";
+import { BOOKING_STATUS, ZALOPAY_CONFIG } from "~/utils/constants";
 
 const createPayment = async (reqData) => {
-  const { amount, orderInfo } = reqData;
+  const bookingInfoData = reqData;
+
+  const { totalPrice: amount } = bookingInfoData;
 
   const embed_data = {
-    redirecturl: "https://fast-food-ecommerce.vercel.app/success",
+    redirecturl: "http://localhost:5173/booking/complete",
     amount,
-    orderInfo,
+    bookingInfoData,
   };
 
   const items = [{}];
@@ -24,7 +28,7 @@ const createPayment = async (reqData) => {
     description: `Lazada - Payment for the order #${transID}`,
     bank_code: "",
     callback_url:
-      "https://4876-2402-800-63a8-dd41-550-3021-3cf6-a760.ngrok-free.app/callback",
+      "https://5870-115-76-103-197.ngrok-free.app/v1/payment/zalopay/callback",
   };
 
   const data =
@@ -75,12 +79,26 @@ const callbackPayment = async (reqData) => {
 
       const embedData = JSON.parse(dataJson["embed_data"]);
 
-      const { amount, orderInfo } = embedData;
+      const bookingInfoData = embedData.bookingInfoData;
 
-      let updateData = [...orderInfo.orderData];
+      if (!bookingInfoData) {
+        console.error("Booking info data not found in embed_data");
+        result.return_code = 0;
+        result.return_message = "missing_booking_data";
+        return result;
+      }
+
+      let updateData = {
+        ...bookingInfoData,
+        status: BOOKING_STATUS.COMPLETED,
+      };
+
+      const createdBooking = await bookingModel.createNew(updateData);
 
       result.return_code = 1;
       result.return_message = "success";
+
+      return createdBooking;
     }
   } catch (error) {
     throw new Error(error);
