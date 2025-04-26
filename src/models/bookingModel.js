@@ -53,7 +53,7 @@ const BOOKING_COLLECTION_SCHEMA = Joi.object({
   mode: Joi.string().required().valid(BOOKING_MODE.night, BOOKING_MODE.day),
   checkInDate: Joi.string().isoDate().required(),
   checkOutDate: Joi.string().isoDate().required(),
-  numberOfNights: Joi.number().required(),
+  numberOfNights: Joi.number().optional(),
   guest: Joi.number().required(),
   totalPrice: Joi.number().required(),
   note: Joi.string().allow("").optional(),
