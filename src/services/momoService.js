@@ -16,7 +16,7 @@ const createPayment = async (reqData) => {
   var partnerCode = "MOMO";
   var redirectUrl = "http://localhost:5173/booking/complete";
   var ipnUrl =
-    "https://5870-115-76-103-197.ngrok-free.app/v1/payment/momo/callback";
+    "https://27d4-115-76-98-16.ngrok-free.app/v1/payment/momo/callback";
   var requestType = "payWithMethod";
   var orderId = partnerCode + new Date().getTime();
   var requestId = orderId;

@@ -36,7 +36,7 @@ const createPayment = async (req, res, next) => {
     mode: Joi.string().required().valid(BOOKING_MODE.night, BOOKING_MODE.day),
     checkInDate: Joi.string().isoDate().required(),
     checkOutDate: Joi.string().isoDate().required(),
-    numberOfNights: Joi.number().required(),
+    numberOfNights: Joi.number().optional(),
     guest: Joi.number().required(),
     paymentMethod: Joi.string()
       .required()
