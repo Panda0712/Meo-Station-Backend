@@ -1,6 +1,7 @@
 import Joi from "joi";
 import { ObjectId } from "mongodb";
 import { GET_DB } from "~/config/mongodb";
+import { hotelModel } from "~/models/hotelModel";
 import { pagingSkipValue } from "~/utils/algorithms";
 import {
   BOOKING_MODE,
@@ -84,7 +85,11 @@ const createNew = async (reqData) => {
 
     const createdBooking = await GET_DB()
       .collection(BOOKING_COLLECTION_NAME)
-      .insertOne(validData);
+      .insertOne({
+        ...validData,
+        userId: new ObjectId(String(validData.userId)),
+        hotelId: new ObjectId(String(validData.hotelId)),
+      });
 
     return createdBooking;
   } catch (error) {
@@ -120,6 +125,37 @@ const getDetails = async (bookingId) => {
       .toArray();
 
     return foundBooking[0] || null;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+const getBookingsByUser = async (userId) => {
+  try {
+    const queryConditions = [
+      {
+        userId: new ObjectId(String(userId)),
+        _destroy: false,
+      },
+    ];
+
+    const foundBooking = await GET_DB()
+      .collection(BOOKING_COLLECTION_NAME)
+      .aggregate([
+        { $match: { $and: queryConditions } },
+        {
+          $lookup: {
+            from: hotelModel.HOTEL_COLLECTION_NAME,
+            localField: "hotelId",
+            foreignField: "_id",
+            as: "hotel",
+          },
+        },
+        { $sort: { createdAt: -1 } },
+      ])
+      .toArray();
+
+    return foundBooking;
   } catch (error) {
     throw new Error(error);
   }
@@ -221,6 +257,7 @@ export const bookingModel = {
   createNew,
   findOneById,
   getDetails,
+  getBookingsByUser,
   getListBookings,
   update,
   deleteOne,

@@ -15,6 +15,16 @@ const createNew = async (reqData) => {
   }
 };
 
+const getBookingsByUser = async (userId) => {
+  try {
+    const results = await bookingModel.getBookingsByUser(userId);
+
+    return results;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const getDetails = async (bookingId) => {
   try {
     const foundBooking = await bookingModel.getDetails(bookingId);
@@ -71,6 +81,7 @@ const deleteOne = async (bookingId) => {
 export const bookingService = {
   createNew,
   getDetails,
+  getBookingsByUser,
   getListBookings,
   update,
   deleteOne,

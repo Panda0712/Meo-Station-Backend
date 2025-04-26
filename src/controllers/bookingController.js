@@ -23,6 +23,18 @@ const getDetails = async (req, res, next) => {
   }
 };
 
+const getBookingsByUser = async (req, res, next) => {
+  try {
+    const userId = req.jwtDecoded._id;
+
+    const results = await bookingService.getBookingsByUser(userId);
+
+    res.status(StatusCodes.OK).json(results);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getListBookings = async (req, res, next) => {
   try {
     const { page, itemsPerPage, q } = req.query;
@@ -65,6 +77,7 @@ const deleteOne = async (req, res, next) => {
 export const bookingController = {
   createNew,
   getDetails,
+  getBookingsByUser,
   getListBookings,
   update,
   deleteOne,
