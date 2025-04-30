@@ -13,7 +13,9 @@ const createNew = async (req, res, next) => {
 
 const getBookingStatistics = async (req, res, next) => {
   try {
-    const statistics = await bookingService.getBookingStatistics();
+    const { month, day } = req.query;
+
+    const statistics = await bookingService.getBookingStatistics(month, day);
 
     res.status(StatusCodes.OK).json(statistics);
   } catch (error) {

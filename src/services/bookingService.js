@@ -25,9 +25,9 @@ const getBookingsByUser = async (userId) => {
   }
 };
 
-const getBookingStatistics = async (req, res, next) => {
+const getBookingStatistics = async (month, day) => {
   try {
-    const statistics = await bookingModel.getBookingStatistics();
+    const statistics = await bookingModel.getBookingStatistics(month, day);
 
     return statistics;
   } catch (error) {
