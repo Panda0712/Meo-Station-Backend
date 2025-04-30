@@ -111,7 +111,7 @@ const findOneById = async (id) => {
   }
 };
 
-const getBookingStatistics = async () => {
+const getBookingStatistics = async (month, day) => {
   try {
     const totalBookings = await GET_DB()
       .collection(BOOKING_COLLECTION_NAME)
@@ -127,25 +127,68 @@ const getBookingStatistics = async () => {
       ])
       .toArray();
 
+    const revenueMatch = {
+      _destroy: false,
+      status: BOOKING_STATUS.COMPLETED,
+    };
+
+    if (month) {
+      revenueMatch.$expr = {
+        $eq: [{ $month: { $toDate: "$createdAt" } }, parseInt(month)],
+      };
+    }
+    if (day && month) {
+      revenueMatch.$expr = {
+        $and: [
+          { $eq: [{ $month: { $toDate: "$createdAt" } }, parseInt(month)] },
+          { $eq: [{ $dayOfMonth: { $toDate: "$createdAt" } }, parseInt(day)] },
+        ],
+      };
+    }
+
+    let groupStage;
+    if (month && day) {
+      groupStage = {
+        _id: null,
+        total: { $sum: "$totalPrice" },
+        count: { $sum: 1 },
+      };
+    } else if (month) {
+      groupStage = {
+        _id: { day: { $dayOfMonth: { $toDate: "$createdAt" } } },
+        total: { $sum: "$totalPrice" },
+        count: { $sum: 1 },
+      };
+    } else {
+      groupStage = {
+        _id: { month: { $month: { $toDate: "$createdAt" } } },
+        total: { $sum: "$totalPrice" },
+        count: { $sum: 1 },
+      };
+    }
+
     const revenueData = await GET_DB()
       .collection(BOOKING_COLLECTION_NAME)
       .aggregate([
-        { $match: { _destroy: false, status: BOOKING_STATUS.COMPLETED } },
-        {
-          $group: {
-            _id: { $month: { $toDate: "$createdAt" } },
-            total: { $sum: "$totalPrice" },
-            count: { $sum: 1 },
-          },
-        },
-        { $sort: { _id: 1 } },
+        { $match: revenueMatch },
+        { $group: groupStage },
+        { $sort: { "_id.month": 1, "_id.day": 1 } },
       ])
       .toArray();
+
+    let formattedRevenueData = revenueData;
+    if (month && day) {
+      formattedRevenueData = revenueData.map((item) => ({
+        _id: { month: parseInt(month), day: parseInt(day) },
+        total: item.total,
+        count: item.count,
+      }));
+    }
 
     return {
       totalBookings,
       bookingsByStatus,
-      revenueData,
+      revenueData: formattedRevenueData,
     };
   } catch (error) {
     throw new Error(error);
