@@ -25,6 +25,16 @@ const getBookingsByUser = async (userId) => {
   }
 };
 
+const getBookingStatistics = async (req, res, next) => {
+  try {
+    const statistics = await bookingModel.getBookingStatistics();
+
+    return statistics;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const getDetails = async (bookingId) => {
   try {
     const foundBooking = await bookingModel.getDetails(bookingId);
@@ -80,6 +90,7 @@ const deleteOne = async (bookingId) => {
 
 export const bookingService = {
   createNew,
+  getBookingStatistics,
   getDetails,
   getBookingsByUser,
   getListBookings,
