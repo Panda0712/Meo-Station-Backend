@@ -111,6 +111,47 @@ const findOneById = async (id) => {
   }
 };
 
+const getBookingStatistics = async () => {
+  try {
+    const totalBookings = await GET_DB()
+      .collection(BOOKING_COLLECTION_NAME)
+      .countDocuments({
+        _destroy: false,
+      });
+
+    const bookingsByStatus = await GET_DB()
+      .collection(BOOKING_COLLECTION_NAME)
+      .aggregate([
+        { $match: { _destroy: false } },
+        { $group: { _id: "$status", count: { $sum: 1 } } },
+      ])
+      .toArray();
+
+    const revenueData = await GET_DB()
+      .collection(BOOKING_COLLECTION_NAME)
+      .aggregate([
+        { $match: { _destroy: false, status: BOOKING_STATUS.COMPLETED } },
+        {
+          $group: {
+            _id: { $month: { $toDate: "$createdAt" } },
+            total: { $sum: "$totalPrice" },
+            count: { $sum: 1 },
+          },
+        },
+        { $sort: { _id: 1 } },
+      ])
+      .toArray();
+
+    return {
+      totalBookings,
+      bookingsByStatus,
+      revenueData,
+    };
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 const getDetails = async (bookingId) => {
   try {
     const queryConditions = [
@@ -256,6 +297,7 @@ export const bookingModel = {
   BOOKING_COLLECTION_SCHEMA,
   createNew,
   findOneById,
+  getBookingStatistics,
   getDetails,
   getBookingsByUser,
   getListBookings,
