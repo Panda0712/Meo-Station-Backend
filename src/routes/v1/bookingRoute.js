@@ -13,6 +13,11 @@ Router.route("/")
   )
   .get(authMiddleware.isAuthorized, bookingController.getListBookings);
 
+Router.route("/all").get(
+  authMiddleware.isAuthorized,
+  bookingController.getAllBookings
+);
+
 Router.route("/statistics").get(
   authMiddleware.isAuthorized,
   bookingController.getBookingStatistics

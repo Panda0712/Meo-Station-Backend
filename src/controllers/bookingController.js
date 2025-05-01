@@ -11,6 +11,16 @@ const createNew = async (req, res, next) => {
   }
 };
 
+const getAllBookings = async (req, res, next) => {
+  try {
+    const bookings = await bookingService.getAllBookings();
+
+    res.status(StatusCodes.OK).json(bookings);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getBookingStatistics = async (req, res, next) => {
   try {
     const { month, day } = req.query;
@@ -88,6 +98,7 @@ const deleteOne = async (req, res, next) => {
 
 export const bookingController = {
   createNew,
+  getAllBookings,
   getBookingStatistics,
   getDetails,
   getBookingsByUser,

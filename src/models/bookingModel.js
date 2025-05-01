@@ -293,6 +293,22 @@ const getListBookings = async (page, itemsPerPage, queryFilter) => {
   }
 };
 
+const getAllBookings = async () => {
+  try {
+    const bookings = await GET_DB()
+      .collection(BOOKING_COLLECTION_NAME)
+      .find({
+        _destroy: false,
+      })
+      .sort({ createdAt: -1 })
+      .toArray();
+
+    return bookings;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 const update = async (bookingId, updateData) => {
   try {
     Object.keys(updateData).forEach((fieldName) => {
@@ -340,6 +356,7 @@ export const bookingModel = {
   BOOKING_COLLECTION_SCHEMA,
   createNew,
   findOneById,
+  getAllBookings,
   getBookingStatistics,
   getDetails,
   getBookingsByUser,
