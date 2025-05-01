@@ -2,7 +2,7 @@ import { env } from "~/config/environment";
 
 export const WHITELIST_DOMAINS = [
   "https://trello-clone-opal-psi.vercel.app",
-  "https://meo-station.vercel.app/",
+  "https://meo-station.vercel.app",
   "http://localhost:5173",
 ];
 
