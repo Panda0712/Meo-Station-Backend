@@ -1,6 +1,7 @@
 import Joi from "joi";
 import { ObjectId } from "mongodb";
 import { GET_DB } from "~/config/mongodb";
+import { bookingModel } from "~/models/bookingModel";
 import { pagingSkipValue } from "~/utils/algorithms";
 
 const HOTEL_COLLECTION_NAME = "hotels";
@@ -125,6 +126,57 @@ const update = async (hotelId, updateData) => {
   }
 };
 
+const getSearchHotels = async (
+  checkInDate,
+  checkOutDate,
+  guest,
+  queryFilter
+) => {
+  try {
+    const bookings = await bookingModel.getAllBookings();
+
+    const listTimeBookings = bookings?.map((booking) => ({
+      hotelId: booking.hotelId,
+      checkInDate: booking.checkInDate,
+      checkOutDate: booking.checkOutDate,
+    }));
+
+    const disabledHotel = listTimeBookings
+      .map((booking) =>
+        new Date(checkInDate) <= new Date(booking.checkOutDate) &&
+        new Date(checkOutDate) >= new Date(booking.checkInDate)
+          ? booking.hotelId
+          : null
+      )
+      .filter(Boolean);
+
+    const queryConditions = [
+      {
+        _destroy: false,
+        maxGuest: { $gte: guest },
+        _id: { $nin: disabledHotel.map((id) => new ObjectId(String(id))) },
+      },
+    ];
+
+    if (queryFilter) {
+      Object.keys(queryFilter).forEach((key) => {
+        queryConditions.push({
+          [key]: { $regex: new RegExp(queryFilter[key], "i") },
+        });
+      });
+    }
+
+    const hotels = await GET_DB()
+      .collection(HOTEL_COLLECTION_NAME)
+      .find({ $and: queryConditions })
+      .toArray();
+
+    return hotels;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 const getListHotels = async (page, itemsPerPage, queryFilter) => {
   try {
     const queryCondition = [
@@ -196,6 +248,7 @@ export const hotelModel = {
   findOneById,
   findOneByName,
   update,
+  getSearchHotels,
   getListHotels,
   deleteHotel,
 };
