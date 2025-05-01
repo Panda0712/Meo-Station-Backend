@@ -40,6 +40,24 @@ const uploadImages = async (req, res, next) => {
   }
 };
 
+const getSearchHotels = async (req, res, next) => {
+  try {
+    const { checkInDate, checkOutDate, guest, q } = req.query;
+    const queryFilter = q ? JSON.parse(q) : q;
+
+    const results = await hotelService.getSearchHotels(
+      checkInDate,
+      checkOutDate,
+      guest,
+      queryFilter
+    );
+
+    res.status(StatusCodes.OK).json(results);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getListHotels = async (req, res, next) => {
   try {
     const { page, itemsPerPage, q } = req.query;
@@ -85,6 +103,7 @@ export const hotelController = {
   createNew,
   getDetails,
   uploadImages,
+  getSearchHotels,
   getListHotels,
   update,
   deleteHotel,

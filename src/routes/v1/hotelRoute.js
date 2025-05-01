@@ -14,6 +14,11 @@ Router.route("/")
     hotelController.createNew
   );
 
+Router.route("/search").get(
+  authMiddleware.isAuthorized,
+  hotelController.getSearchHotels
+);
+
 Router.route("/:hotelId")
   .put(
     authMiddleware.isAuthorized,

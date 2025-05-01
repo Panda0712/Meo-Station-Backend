@@ -31,6 +31,28 @@ const getDetails = async (hotelId) => {
   }
 };
 
+const getSearchHotels = async (
+  checkInDate,
+  checkOutDate,
+  guest,
+  queryFilter
+) => {
+  try {
+    if (!guest) guest = 1;
+
+    const results = await hotelModel.getSearchHotels(
+      checkInDate,
+      checkOutDate,
+      parseInt(guest, 10),
+      queryFilter
+    );
+
+    return results;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const getListHotels = async (page, itemsPerPage, queryFilter) => {
   try {
     if (!page) page = DEFAULT_PAGE;
@@ -71,6 +93,7 @@ const deleteHotel = async (hotelId) => {
 export const hotelService = {
   createNew,
   getDetails,
+  getSearchHotels,
   getListHotels,
   update,
   deleteHotel,
