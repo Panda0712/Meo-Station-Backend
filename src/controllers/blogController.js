@@ -21,7 +21,7 @@ const createNew = async (req, res, next) => {
 const getListBlogs = async (req, res, next) => {
   try {
     const { page, itemsPerPage, q } = req.query;
-    const queryFilter = JSON.parse(q);
+    const queryFilter = q ? JSON.parse(q) : q;
 
     const results = await blogService.getListBlogs(
       page,
