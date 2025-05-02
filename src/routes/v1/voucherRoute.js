@@ -13,6 +13,12 @@ Router.route("/")
   )
   .get(authMiddleware.isAuthorized, voucherController.getVouchers);
 
+Router.route("/check").get(
+  authMiddleware.isAuthorized,
+  voucherValidation.checkVoucher,
+  voucherController.checkVoucher
+);
+
 Router.route("/:voucherId")
   .get(
     authMiddleware.isAuthorized,

@@ -50,6 +50,33 @@ const createNew = async (data) => {
   }
 };
 
+const checkVoucher = async (code, hotelId) => {
+  try {
+    const voucher = await GET_DB()
+      .collection(VOUCHER_COLLECTION_NAME)
+      .findOne({
+        code: String(code),
+        _destroy: false,
+      });
+    if (!voucher) {
+      throw new Error("Voucher không tồn tại hoặc đã bị xóa!!!");
+    }
+
+    if (voucher.expiredAt && Date.now() > voucher.expiredAt)
+      throw new Error("Voucher đã hết hạn!!!");
+
+    if (voucher.usageLimit && voucher.usedCount >= voucher.usageLimit)
+      throw new Error("Voucher đã được sử dụng hết số lần cho phép!!!");
+
+    if (!voucher.hotelIds.includes(hotelId))
+      throw new Error("Voucher không áp dụng cho phòng này!!!");
+
+    return voucher;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 const getVouchers = async (page, itemsPerPage, queryFilter) => {
   try {
     const queryConditions = [
@@ -113,6 +140,20 @@ const getVoucherById = async (voucherId) => {
   }
 };
 
+const findOneByCode = async (code) => {
+  try {
+    const foundVoucher = await GET_DB()
+      .collection(VOUCHER_COLLECTION_NAME)
+      .findOne({
+        code: String(code),
+      });
+
+    return foundVoucher;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 const update = async (voucherId, updateData) => {
   try {
     Object.keys(updateData).forEach((fieldName) => {
@@ -161,6 +202,8 @@ export const voucherModel = {
   VOUCHER_COLLECTION_NAME,
   VOUCHER_COLLECTION_SCHEMA,
   createNew,
+  findOneByCode,
+  checkVoucher,
   getVouchers,
   getVoucherById,
   update,
