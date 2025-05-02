@@ -1,4 +1,6 @@
+import { StatusCodes } from "http-status-codes";
 import { voucherModel } from "~/models/voucherModel";
+import ApiError from "~/utils/ApiError";
 import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE } from "~/utils/constants";
 
 const createNew = async (reqData) => {
@@ -10,6 +12,21 @@ const createNew = async (reqData) => {
     );
 
     return getNewVoucher;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const checkVoucher = async (code, hotelId) => {
+  try {
+    const checkCode = await voucherModel.findOneByCode(code);
+    if (!checkCode) {
+      throw new ApiError(StatusCodes.NOT_FOUND, "Voucher không tồn tại!!!");
+    }
+
+    const result = await voucherModel.checkVoucher(code, hotelId);
+
+    return result;
   } catch (error) {
     throw error;
   }
@@ -64,6 +81,7 @@ const deleteVoucher = async (voucherId) => {
 
 export const voucherService = {
   createNew,
+  checkVoucher,
   getVouchers,
   getVoucherById,
   update,

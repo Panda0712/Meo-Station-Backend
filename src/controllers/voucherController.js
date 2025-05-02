@@ -11,6 +11,17 @@ const createNew = async (req, res, next) => {
   }
 };
 
+const checkVoucher = async (req, res, next) => {
+  try {
+    const { code, hotelId } = req.query;
+    const result = await voucherService.checkVoucher(code, hotelId);
+
+    res.status(StatusCodes.OK).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getVouchers = async (req, res, next) => {
   try {
     const { page, itemsPerPage, q } = req.query;
@@ -66,6 +77,7 @@ const deleteVoucher = async (req, res, next) => {
 
 export const voucherController = {
   createNew,
+  checkVoucher,
   getVouchers,
   getVoucherById,
   update,
