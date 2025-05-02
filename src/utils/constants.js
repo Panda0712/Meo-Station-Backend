@@ -33,6 +33,7 @@ export const ZALOPAY_CONFIG = {
   endpoint: "https://sb-openapi.zalopay.vn/v2/create",
 };
 
+
 export const WEBSITE_DOMAINS =
   env.BUILD_MODE === "production"
     ? env.WEBSITE_DOMAIN_PRODUCTION
