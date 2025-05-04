@@ -275,6 +275,7 @@ const getListBookings = async (page, itemsPerPage, queryFilter) => {
               queryTotalBookings: [{ $count: "countedAllBookings" }],
             },
           },
+          { $sort: { createdAt: -1 } },
         ],
         {
           collation: { locale: "en" },
