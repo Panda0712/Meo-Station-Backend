@@ -10,7 +10,7 @@ const createPayment = async (reqData) => {
   const { totalPrice: amount } = bookingInfoData;
 
   const embed_data = {
-    redirecturl: "http://localhost:5173/booking/complete",
+    redirecturl: "https://meo-station.vercel.app/booking/complete",
     amount,
     bookingInfoData,
   };
@@ -28,7 +28,7 @@ const createPayment = async (reqData) => {
     description: `Lazada - Payment for the order #${transID}`,
     bank_code: "",
     callback_url:
-      "https://27d4-115-76-98-16.ngrok-free.app/v1/payment/zalopay/callback",
+      "https://meo-station-backend.onrender.com/v1/payment/zalopay/callback",
   };
 
   const data =
