@@ -33,16 +33,16 @@ const START_SERVER = () => {
   });
 
   if (env.BUILD_MODE === "production") {
-    // server.listen(process.env.PORT, () => {
-    //   console.log(
-    //     `Production: Hello ${env.AUTHOR}, I am running at PORT: ${process.env.PORT}/`
-    //   );
-    // });
-    const PORT = process.env.PORT || 3000;
-    const HOST = "0.0.0.0"; // Bắt buộc trên cloud
-    server.listen(PORT, HOST, () => {
-      console.log(`Production: Hello ${env.AUTHOR}, running at PORT: ${PORT}`);
+    server.listen(process.env.PORT, () => {
+      console.log(
+        `Production: Hello ${env.AUTHOR}, I am running at PORT: ${process.env.PORT}/`
+      );
     });
+    // const PORT = process.env.PORT || 3000;
+    // const HOST = "0.0.0.0"; // Bắt buộc trên cloud
+    // server.listen(PORT, HOST, () => {
+    //   console.log(`Production: Hello ${env.AUTHOR}, running at PORT: ${PORT}`);
+    // });
   } else {
     server.listen(env.APP_PORT, env.APP_HOST, () => {
       console.log(
