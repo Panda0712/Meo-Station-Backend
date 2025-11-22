@@ -2,7 +2,7 @@
   <h1 align="center">MeoStation — Backend</h1>
   <h3>Hotel Management & Booking API</h3>
 
-<img src="./public/backend-icon.png" alt="MeoStation Backend" style="width:80px;height:80px"></a>
+<img src="https://img.freepik.com/premium-vector/backend-icon_933463-6277.jpg" alt="MeoStation Backend" style="width:80px;height:80px"></a>
 
 </div>
 
@@ -40,25 +40,28 @@ This repository contains the backend API for the MeoStation Hotel Management & B
 1. Clone the repository
 
 ```powershell
-git clone <your-repo-url>>
+git clone https://github.com/Panda0712/Meo-Station-Backend.git
 ```
 
-2. Install backend dependencies
+2. Install dependencies
 
 ```powershell
-cd backend
 npm install
 ```
 
-3. Create a `.env` file at the `backend` project root. You can use the included `.env.example` as a reference. Example keys you should configure:
+3. Create a `.env` file at the project root. You can use the included `.env.example` as a reference. Example keys you should configure:
 
 ```
-MONGODB_URI='mongodb://localhost:27017'
-DATABASE_NAME='meo_station'
+MONGODB_URI='your_connection_string'
+DATABASE_NAME='your_database_name'
 APP_HOST='localhost'
 APP_PORT=5000
+AUTHOR='author_name'
+WEBSITE_DOMAIN_DEVELOPMENT='http://localhost:5173'
+WEBSITE_DOMAIN_PRODUCTION='your_production_domain'
 BREVO_API_KEY='your-brevo-key'
 ADMIN_EMAIL_ADDRESS='admin@example.com'
+ADMIN_EMAIL_NAME='admin_email_name'
 ACCESS_TOKEN_SECRET_SIGNATURE='long_secret'
 ACCESS_TOKEN_LIFE='15m'
 REFRESH_TOKEN_SECRET_SIGNATURE='long_refresh_secret'
@@ -94,13 +97,4 @@ npm run start
 ## Notes & best practices
 
 - Keep secret keys out of source control; use the `.env` file and secret managers for production.
-- Payment providers require server-side configuration and secure callbacks — do not expose secrets to frontend clients.
 - Use the `src/validations` helpers to validate incoming requests and return consistent API error responses.
-- Read `src/config/environment.js` to control environment-specific behavior (CORS, domains, logging).
-- For local development, seed a test admin user or use the registration flow to create an admin account.
-
-## Next steps I can help with
-
-- Add example `.env.local` templates for `frontend` and `backend`.
-- Add `CONTRIBUTING.md` with development and PR guidelines.
-- Add basic GitHub Actions workflow to run linting and tests on PRs.
