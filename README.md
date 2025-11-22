@@ -40,7 +40,7 @@ This repository contains the backend API for the MeoStation Hotel Management & B
 1. Clone the repository
 
 ```powershell
-git clone <your-repo-url>
+git clone <your-repo-url>>
 ```
 
 2. Install backend dependencies
