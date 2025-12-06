@@ -16,7 +16,7 @@ const createPayment = async (reqData) => {
   var partnerCode = "MOMO";
   var redirectUrl = "https://meo-station.vercel.app/booking/complete";
   var ipnUrl =
-    "https://2e4e-171-255-170-228.ngrok-free.app/v1/payment/momo/callback";
+    "https://meo-station-backend.onrender.com/v1/payment/momo/callback";
   var requestType = "payWithMethod";
   var orderId = partnerCode + new Date().getTime();
   var requestId = orderId;
